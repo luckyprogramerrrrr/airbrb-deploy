@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import AuthForm from '../components/AuthForm';
 import config from '../../backend.config.json';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -40,6 +43,7 @@ const Login = () => {
 
       showMsg("Login successful!", "success");
       localStorage.setItem("token", data.token);
+      setTimeout(() => navigate("/"), 1000);
 
     } catch {
       showMsg("Network error", "error");
