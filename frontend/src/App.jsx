@@ -12,6 +12,7 @@ import Register from './pages/Register';
 import HostListings from './pages/HostListings';
 import CreateListing from './pages/CreateListing';
 import Navbar from './components/Navbar';
+import EditListing from './pages/EditListing';
 
 const App = () => {
     return (
@@ -28,6 +29,8 @@ const App = () => {
 
           <Route path="/host" element={<HostListings />} />
           <Route path="/host/new" element={<CreateListing />} />
+          <Route path="/host/:id" element={<EditListing />} />
+
 
         </Routes>
       </BrowserRouter>
