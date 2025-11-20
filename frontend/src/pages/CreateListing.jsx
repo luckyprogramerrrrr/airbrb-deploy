@@ -91,7 +91,7 @@ const CreateListing = () => {
   return (
     <>
       <ListingForm
-        formtitle="Creat"
+        formtitle="Create"
         title={title} setTitle={setTitle}
         street={street} setStreet={setStreet}
         city={city} setCity={setCity}
