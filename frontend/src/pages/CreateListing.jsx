@@ -1,4 +1,3 @@
-// src/pages/CreateListing.jsx
 import { useState } from "react";
 import { Box, TextField, Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +10,13 @@ const CreateListing = () => {
 
   // Basic fields
   const [title, setTitle] = useState("");
-  const [address, setAddress] = useState("");
+
+  // Address split into correct structure
+  const [street, setStreet] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [postcode, setPostcode] = useState("");
+
   const [price, setPrice] = useState("");
   const [type, setType] = useState("");
   const [bathrooms, setBathrooms] = useState("");
@@ -34,14 +39,20 @@ const CreateListing = () => {
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
 
   const handleCreate = async () => {
-    if (!title || !address || !price) {
-      showMsg("Title, address, and price are required", "info");
+    // Minimal required fields
+    if (!title || !street || !city || !price) {
+      showMsg("Title, street, city, and price are required", "info");
       return;
     }
-    // api form
-    const payload = {
+
+    const createform = {
       title,
-      address,
+      address: {
+        street,
+        city,
+        state,
+        postcode: Number(postcode),
+      },
       price: Number(price),
       thumbnail: defaultThumbnail,
       metadata: {
@@ -59,7 +70,7 @@ const CreateListing = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(createform),
       });
 
       const data = await res.json();
@@ -70,7 +81,8 @@ const CreateListing = () => {
       }
 
       showMsg("Listing created!", "success");
-      setTimeout(() => navigate("/host"), 1000);
+
+      setTimeout(() => navigate("/host"), 800);
     } catch {
       showMsg("Network error", "error");
     }
@@ -80,9 +92,17 @@ const CreateListing = () => {
     <Box sx={{ maxWidth: 500, mx: "auto", mt: 4, display: "flex", flexDirection: "column", gap: 2 }}>
       <Typography variant="h4">Create Listing</Typography>
 
+      {/* Title */}
       <TextField label="Title" value={title} onChange={(e) => setTitle(e.target.value)} fullWidth />
-      <TextField label="Address" value={address} onChange={(e) => setAddress(e.target.value)} fullWidth />
-      <TextField label="Price" type="number" value={price} onChange={(e) => setPrice(e.target.value)} fullWidth />
+
+      {/* Correct Address fields */}
+      <TextField label="Street" value={street} onChange={(e) => setStreet(e.target.value)} fullWidth />
+      <TextField label="City" value={city} onChange={(e) => setCity(e.target.value)} fullWidth />
+      <TextField label="State" value={state} onChange={(e) => setState(e.target.value)} fullWidth />
+      <TextField label="Postcode" type="number" value={postcode} onChange={(e) => setPostcode(e.target.value)} fullWidth />
+
+      {/* Other metadata fields */}
+      <TextField label="Price(per night)" type="number" value={price} onChange={(e) => setPrice(e.target.value)} fullWidth />
       <TextField label="Property Type" value={type} onChange={(e) => setType(e.target.value)} fullWidth />
       <TextField label="Bathrooms" type="number" value={bathrooms} onChange={(e) => setBathrooms(e.target.value)} fullWidth />
       <TextField label="Bedrooms" type="number" value={bedrooms} onChange={(e) => setBedrooms(e.target.value)} fullWidth />
