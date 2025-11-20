@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Box, TextField, Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Msgsnackbar from "../components/Msgsnackbar";
+import ListingForm from "../components/ListingForm";
 import config from "../../backend.config.json";
 
 const CreateListing = () => {
@@ -89,28 +89,22 @@ const CreateListing = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 500, mx: "auto", mt: 4, display: "flex", flexDirection: "column", gap: 2 }}>
-      <Typography variant="h4">Create Listing</Typography>
-
-      {/* Title */}
-      <TextField label="Title" value={title} onChange={(e) => setTitle(e.target.value)} fullWidth />
-
-      {/* Correct Address fields */}
-      <TextField label="Street" value={street} onChange={(e) => setStreet(e.target.value)} fullWidth />
-      <TextField label="City" value={city} onChange={(e) => setCity(e.target.value)} fullWidth />
-      <TextField label="State" value={state} onChange={(e) => setState(e.target.value)} fullWidth />
-      <TextField label="Postcode" type="number" value={postcode} onChange={(e) => setPostcode(e.target.value)} fullWidth />
-
-      {/* Other metadata fields */}
-      <TextField label="Price(per night)" type="number" value={price} onChange={(e) => setPrice(e.target.value)} fullWidth />
-      <TextField label="Property Type" value={type} onChange={(e) => setType(e.target.value)} fullWidth />
-      <TextField label="Bathrooms" type="number" value={bathrooms} onChange={(e) => setBathrooms(e.target.value)} fullWidth />
-      <TextField label="Bedrooms" type="number" value={bedrooms} onChange={(e) => setBedrooms(e.target.value)} fullWidth />
-      <TextField label="Amenities (comma separated)" value={amenities} onChange={(e) => setAmenities(e.target.value)} fullWidth />
-
-      <Button variant="contained" onClick={handleCreate}>
-        Create
-      </Button>
+    <>
+      <ListingForm
+        formtitle="Creat"
+        title={title} setTitle={setTitle}
+        street={street} setStreet={setStreet}
+        city={city} setCity={setCity}
+        stateVal={state} setStateVal={setState}
+        postcode={postcode} setPostcode={setPostcode}
+        price={price} setPrice={setPrice}
+        type={type} setType={setType}
+        bathrooms={bathrooms} setBathrooms={setBathrooms}
+        bedrooms={bedrooms} setBedrooms={setBedrooms}
+        amenities={amenities} setAmenities={setAmenities}
+        onSubmit={handleCreate}
+        submitLabel="Create"
+      />
 
       <Msgsnackbar
         open={snackbarOpen}
@@ -118,7 +112,7 @@ const CreateListing = () => {
         severity={snackbarSeverity}
         onClose={onClose}
       />
-    </Box>
+    </>
   );
 };
 
