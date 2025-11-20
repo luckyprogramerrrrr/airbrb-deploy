@@ -26,6 +26,7 @@ const Navbar = () => {
     }
 
     localStorage.removeItem("token");
+    localStorage.removeItem("email");
     navigate("/");
   };
 

@@ -49,7 +49,7 @@ const Register = () => {
       }
 
       localStorage.setItem("token", data.token);
-
+      localStorage.setItem("email", email);
       showMsg("Registration successful!", "success");
       setTimeout(() => navigate("/"), 1000);
 

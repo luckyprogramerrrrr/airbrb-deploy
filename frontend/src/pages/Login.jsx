@@ -43,6 +43,7 @@ const Login = () => {
 
       showMsg("Login successful!", "success");
       localStorage.setItem("token", data.token);
+      localStorage.setItem("email", email);
       setTimeout(() => navigate("/"), 1000);
 
     } catch {
