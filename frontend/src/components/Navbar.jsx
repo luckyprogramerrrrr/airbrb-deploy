@@ -38,7 +38,7 @@ const Navbar = ({ showMsg }) => {
   return (
     <AppBar position="static" color="default" sx={{ px: 2 }}>
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+        <Typography variant="h6" sx={{ fontWeight: "bold", cursor: "pointer", textDecoration: "none"}} component={Link}to="/">
           AirBrB
         </Typography>
 
