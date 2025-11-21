@@ -16,6 +16,7 @@ import Register from './pages/Register';
 import HostListings from './pages/HostListings';
 import CreateListing from './pages/CreateListing';
 import EditListing from './pages/EditListing';
+import ListingDetail from "./pages/ListingDetail";
 
 const App = () => {
   // Global snackbar state
@@ -40,6 +41,7 @@ const App = () => {
         {/* Public */}
         <Route path="/" element={<Landing showMsg={showMsg}/>} />
         <Route path="/listings" element={<Landing showMsg={showMsg}/>} />
+        <Route path="/listing/:id" element={<ListingDetail showMsg={showMsg} />}/>
 
         {/* Auth */}
         <Route path="/login" element={<Login showMsg={showMsg} />} />
