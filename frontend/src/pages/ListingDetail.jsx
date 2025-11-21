@@ -6,7 +6,6 @@ import {
   Card,
   CardMedia,
   CardContent,
-  Stack,
   Divider,
 } from "@mui/material";
 import config from "../../backend.config.json";
@@ -115,7 +114,7 @@ export default function ListingDetail({ showMsg }) {
           {reviews.map((r, idx) => (
             <Box key={idx} sx={{ mb: 2 }}>
               <Typography>
-                  {r.rating} — <b>{r.author}</b>
+                {r.rating} — <b>{r.author}</b>
               </Typography>
               <Typography>{r.comment}</Typography>
               <Divider sx={{ mt: 1 }} />
