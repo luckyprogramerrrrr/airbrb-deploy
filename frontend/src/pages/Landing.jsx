@@ -12,6 +12,8 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import config from "../../backend.config.json";
+import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+
 
 const Landing = ({ showMsg }) => {
   const navigate = useNavigate();
@@ -20,9 +22,17 @@ const Landing = ({ showMsg }) => {
   const [loading, setLoading] = useState(true);
   const [filtered, setFiltered] = useState([]);
 
+  const [filterType, setFilterType] = useState(""); 
+  const [sortOrder, setSortOrder] = useState(""); 
   const [search, setSearch] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
+
+  const [minBedrooms, setMinBedrooms] = useState("");
+  const [maxBedrooms, setMaxBedrooms] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
 
   const fetchListings = async () => {
     try {
@@ -65,34 +75,12 @@ const Landing = ({ showMsg }) => {
     }
   };
 
-
   useEffect(() => {
     fetchListings();
   }, []);
 
-  const handleSearch = () => {
-    let res = [...listings];
 
-    // default search: title OR city
-    if (search.trim()) {
-      const s = search.toLowerCase();
-      res = res.filter(
-        (l) =>
-          l.title.toLowerCase().includes(s) ||
-          l.address.city.toLowerCase().includes(s)
-      );
-    }
 
-    // price filter
-    if (minPrice) {
-      res = res.filter((l) => l.price >= Number(minPrice));
-    }
-    if (maxPrice) {
-      res = res.filter((l) => l.price <= Number(maxPrice));
-    }
-
-    setFiltered(res);
-  };
 
   if (loading) {
     return (
@@ -106,25 +94,134 @@ const Landing = ({ showMsg }) => {
         Listings
       </Typography>
 
+      <Box sx={{ mb: 2 }}>
+        <FormControl sx={{ minWidth: 180 }}>
+          <InputLabel>Filter Type</InputLabel>
+          <Select
+            value={filterType}
+            label="Filter Type"
+            onChange={(e) => {
+              setFilterType(e.target.value);
+              setSortOrder(""); 
+            }}
+          >
+            <MenuItem value="">None</MenuItem>
+            <MenuItem value="price">Price Range</MenuItem>
+            <MenuItem value="bedrooms">Bedrooms Range</MenuItem>
+            <MenuItem value="rating">Rating Sort</MenuItem>
+            <MenuItem value="date">Date Range</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+
       {/* Search Controls */}
       <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
+        
+        {/* default search */}
         <TextField
-          label="Search Title or City"
+          label="Search (title or city)"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          sx={{ minWidth: 200 }}
         />
-        <TextField
-          label="Min Price"
-          type="number"
-          value={minPrice}
-          onChange={(e) => setMinPrice(e.target.value)}
-        />
-        <TextField
-          label="Max Price"
-          type="number"
-          value={maxPrice}
-          onChange={(e) => setMaxPrice(e.target.value)}
-        />
+
+        {/* Price */}
+        {filterType === "price" && (
+          <>
+            <TextField
+              label="Min Price"
+              type="number"
+              value={minPrice}
+              onChange={(e) => setMinPrice(e.target.value)}
+            />
+            <TextField
+              label="Max Price"
+              type="number"
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(e.target.value)}
+            />
+            <Button
+              variant={sortOrder === "asc" ? "contained" : "outlined"}
+              onClick={() => setSortOrder("asc")}
+            >
+              ↑
+            </Button>
+            <Button
+              variant={sortOrder === "desc" ? "contained" : "outlined"}
+              onClick={() => setSortOrder("desc")}
+            >
+              ↓
+            </Button>
+          </>
+        )}
+
+        {/* Bedrooms */}
+        {filterType === "bedrooms" && (
+          <>
+            <TextField
+              label="Min Bedrooms"
+              type="number"
+              value={minBedrooms}
+              onChange={(e) => setMinBedrooms(e.target.value)}
+            />
+            <TextField
+              label="Max Bedrooms"
+              type="number"
+              value={maxBedrooms}
+              onChange={(e) => setMaxBedrooms(e.target.value)}
+            />
+            <Button
+              variant={sortOrder === "asc" ? "contained" : "outlined"}
+              onClick={() => setSortOrder("asc")}
+            >
+              ↑
+            </Button>
+            <Button
+              variant={sortOrder === "desc" ? "contained" : "outlined"}
+              onClick={() => setSortOrder("desc")}
+            >
+              ↓
+            </Button>
+          </>
+        )}
+
+        {/* Rating */}
+        {filterType === "rating" && (
+          <>
+            <Button
+              variant={sortOrder === "asc" ? "contained" : "outlined"}
+              onClick={() => setSortOrder("asc")}
+            >
+              Rating ↑
+            </Button>
+            <Button
+              variant={sortOrder === "desc" ? "contained" : "outlined"}
+              onClick={() => setSortOrder("desc")}
+            >
+              Rating ↓
+            </Button>
+          </>
+        )}
+
+        {/* Date Range */}
+        {filterType === "date" && (
+          <>
+            <TextField
+              label="Start Date"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+            <TextField
+              label="End Date"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </>
+        )}
 
         <Button variant="contained" onClick={handleSearch}>
           Search
