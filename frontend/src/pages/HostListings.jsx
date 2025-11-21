@@ -146,145 +146,147 @@ const HostListings = () => {
   }
 
   return (
-    <Box sx={{ maxWidth: 900, mx: "auto", mt: 4 }}>
-      <Typography variant="h4" sx={{ mb: 3 }}>
-        Your Listings
-      </Typography>
+    <>
+      <Box sx={{ maxWidth: 900, mx: "auto", mt: 4 }}>
+        <Typography variant="h4" sx={{ mb: 3 }}>
+          Your Listings
+        </Typography>
 
-      {/* Create Button */}
-      <Button
-        variant="contained"
-        sx={{ mb: 3 }}
-        onClick={() => navigate("/host/new")}
-      >
-        Create New Listing
-      </Button>
+        {/* Create Button */}
+        <Button
+          variant="contained"
+          sx={{ mb: 3 }}
+          onClick={() => navigate("/host/new")}
+        >
+          Create New Listing
+        </Button>
 
-      <Stack spacing={3}>
-        {/* create card for every record */}
-        {listings.map((listing) => {
-          const reviewCount = listing.reviews?.length || 0;
-          // caculate avg rating
-          const avgRating =
-            reviewCount > 0? listing.reviews.reduce(
-                  (sum, r) => sum + (r.rating || 0),
-                  0
-                ) / reviewCount
-              : 0;
+        <Stack spacing={3}>
+          {/* create card for every record */}
+          {listings.map((listing) => {
+            const reviewCount = listing.reviews?.length || 0;
+            // caculate avg rating
+            const avgRating =
+              reviewCount > 0? listing.reviews.reduce(
+                    (sum, r) => sum + (r.rating || 0),
+                    0
+                  ) / reviewCount
+                : 0;
 
-          const beds = listing.metadata?.bedrooms || 0;
-          const baths = listing.metadata?.bathrooms || 0;
-          const type = listing.metadata?.type || "Unknown";
+            const beds = listing.metadata?.bedrooms || 0;
+            const baths = listing.metadata?.bathrooms || 0;
+            const type = listing.metadata?.type || "Unknown";
 
-          return (
-            <Card
-              key={listing.id}
-              sx={{
-                display: "flex",
-                flexDirection: { xs: "column", sm: "row" },
-                boxShadow: 3,
-              }}
-            >
-              <CardMedia
-                component="img"
+            return (
+              <Card
+                key={listing.id}
                 sx={{
-                  width: { xs: "100%", sm: 200 },
-                  height: 150,
-                  objectFit: "cover",
+                  display: "flex",
+                  flexDirection: { xs: "column", sm: "row" },
+                  boxShadow: 3,
                 }}
-                image={listing.thumbnail}
-                alt={listing.title}
-              />
+              >
+                <CardMedia
+                  component="img"
+                  sx={{
+                    width: { xs: "100%", sm: 200 },
+                    height: 150,
+                    objectFit: "cover",
+                  }}
+                  image={listing.thumbnail}
+                  alt={listing.title}
+                />
 
-              <CardContent sx={{ flex: 1 }}>
-                <Typography variant="h4">{listing.title}</Typography>
-                <Typography variant="h6">{type}</Typography>
+                <CardContent sx={{ flex: 1 }}>
+                  <Typography variant="h4">{listing.title}</Typography>
+                  <Typography variant="h6">{type}</Typography>
 
-                <Typography sx={{ mt: 1 }}>
-                  Beds: {beds} · Bathrooms: {baths}
-                </Typography>
-
-                <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-                  <Rating value={avgRating} precision={0.5} readOnly />
-                  <Typography sx={{ ml: 1 }}>
-                    ({reviewCount} reviews)
+                  <Typography sx={{ mt: 1 }}>
+                    Beds: {beds} · Bathrooms: {baths}
                   </Typography>
-                </Box>
 
-                <Typography sx={{ mt: 1, fontWeight: "bold" }}>
-                  ${listing.price} / night
-                </Typography>
+                  <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
+                    <Rating value={avgRating} precision={0.5} readOnly />
+                    <Typography sx={{ ml: 1 }}>
+                      ({reviewCount} reviews)
+                    </Typography>
+                  </Box>
 
-                <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
-                  <Button
-                    variant="contained"
-                    onClick={() => navigate(`/host/${listing.id}`)}
-                  >
-                    Edit
-                  </Button>
+                  <Typography sx={{ mt: 1, fontWeight: "bold" }}>
+                    ${listing.price} / night
+                  </Typography>
 
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => openDeleteDialog(listing.id)}
-                  >
-                    Delete
-                  </Button>
-
-                  {listing.published ? (
-                    <Button 
-                      variant="contained" color="warning"
+                  <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
+                    <Button
+                      variant="contained"
                       onClick={() => navigate(`/host/${listing.id}`)}
                     >
-                      Unpublish
+                      Edit
                     </Button>
-                  ) : (
-                    <Button 
-                      variant="contained" color="success"
-                      onClick={() => navigate(`/host/${listing.id}`)}
+
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => openDeleteDialog(listing.id)}
                     >
-                      Publish
+                      Delete
                     </Button>
-                  )}
-                </Stack>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </Stack>
-      
-      {/* delete confirm */}
-      <Dialog
-        open={deleteOpen}
-        onClose={closeDeleteDialog}
-        aria-labelledby="delete-dialog-title"
-        aria-describedby="delete-dialog-description"
-      >
-        <DialogTitle id="delete-dialog-title">
-          {"Delete this listing?"}
-        </DialogTitle>
 
-        <DialogContent>
-          <DialogContentText id="delete-dialog-description">
-            This action cannot be undone. Are you sure you want to delete this listing?
-          </DialogContentText>
-        </DialogContent>
+                    {listing.published ? (
+                      <Button 
+                        variant="contained" color="warning"
+                        onClick={() => navigate(`/host/${listing.id}`)}
+                      >
+                        Unpublish
+                      </Button>
+                    ) : (
+                      <Button 
+                        variant="contained" color="success"
+                        onClick={() => navigate(`/host/${listing.id}`)}
+                      >
+                        Publish
+                      </Button>
+                    )}
+                  </Stack>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </Stack>
+        
+        {/* delete confirm */}
+        <Dialog
+          open={deleteOpen}
+          onClose={closeDeleteDialog}
+          aria-labelledby="delete-dialog-title"
+          aria-describedby="delete-dialog-description"
+        >
+          <DialogTitle id="delete-dialog-title">
+            {"Delete this listing?"}
+          </DialogTitle>
 
-        <DialogActions>
-          <Button onClick={closeDeleteDialog}>Cancel</Button>
-          <Button color="error" onClick={handleDelete} autoFocus>
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+          <DialogContent>
+            <DialogContentText id="delete-dialog-description">
+              This action cannot be undone. Are you sure you want to delete this listing?
+            </DialogContentText>
+          </DialogContent>
+
+          <DialogActions>
+            <Button onClick={closeDeleteDialog}>Cancel</Button>
+            <Button color="error" onClick={handleDelete} autoFocus>
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Box>
 
       <Msgsnackbar
         open={snackbarOpen}
         message={snackbarMsg}
         severity={snackbarSeverity}
-        onClose={snackbarOnClose}
+        onClose={onClose}
       />
-    </Box>
+    </>
   );
 };
 
