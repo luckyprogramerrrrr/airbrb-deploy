@@ -3,10 +3,15 @@ import { useNavigate } from "react-router-dom";
 import Msgsnackbar from "../components/Msgsnackbar";
 import ListingForm from "../components/ListingForm";
 import config from "../../backend.config.json";
+import { Navigate } from "react-router-dom";
 
 const CreateListing = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+  // login guard
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
 
   // Basic fields
   const [title, setTitle] = useState("");

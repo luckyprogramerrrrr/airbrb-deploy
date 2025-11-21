@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Navigate } from "react-router-dom";
 import { useNavigate, useParams } from "react-router-dom";
 import Msgsnackbar from "../components/Msgsnackbar";
 import ListingForm from "../components/ListingForm";
@@ -8,6 +9,10 @@ const EditListing = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const token = localStorage.getItem("token");
+  // login guard
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
 
   // listing form
   const [title, setTitle] = useState("");
