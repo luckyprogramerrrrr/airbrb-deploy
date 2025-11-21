@@ -110,22 +110,22 @@ const EditListing = ({ showMsg }) => {
   }
 
   return (
-      <ListingForm
-        formtitle="edit"
-        title={title} setTitle={setTitle}
-        street={street} setStreet={setStreet}
-        city={city} setCity={setCity}
-        stateVal={state} setStateVal={setState}
-        postcode={postcode} setPostcode={setPostcode}
-        price={price} setPrice={setPrice}
-        type={type} setType={setType}
-        bathrooms={bathrooms} setBathrooms={setBathrooms}
-        bedrooms={bedrooms} setBedrooms={setBedrooms}
-        amenities={amenities} setAmenities={setAmenities}
+    <ListingForm
+      formtitle="edit"
+      title={title} setTitle={setTitle}
+      street={street} setStreet={setStreet}
+      city={city} setCity={setCity}
+      stateVal={state} setStateVal={setState}
+      postcode={postcode} setPostcode={setPostcode}
+      price={price} setPrice={setPrice}
+      type={type} setType={setType}
+      bathrooms={bathrooms} setBathrooms={setBathrooms}
+      bedrooms={bedrooms} setBedrooms={setBedrooms}
+      amenities={amenities} setAmenities={setAmenities}
 
-        onSubmit={handleSave}
-        submitLabel="save"
-      />
+      onSubmit={handleSave}
+      submitLabel="save"
+    />
   );
 };
 

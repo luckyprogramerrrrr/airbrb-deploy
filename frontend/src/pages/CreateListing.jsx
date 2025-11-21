@@ -23,8 +23,6 @@ const CreateListing = ({ showMsg }) => {
   const [bedrooms, setBedrooms] = useState("");
   const [amenities, setAmenities] = useState("");
 
-  const onClose = () => setSnackbarOpen(false);
-
   const defaultThumbnail =
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
 
@@ -84,21 +82,21 @@ const CreateListing = ({ showMsg }) => {
   }
 
   return (
-      <ListingForm
-        formtitle="Create"
-        title={title} setTitle={setTitle}
-        street={street} setStreet={setStreet}
-        city={city} setCity={setCity}
-        stateVal={state} setStateVal={setState}
-        postcode={postcode} setPostcode={setPostcode}
-        price={price} setPrice={setPrice}
-        type={type} setType={setType}
-        bathrooms={bathrooms} setBathrooms={setBathrooms}
-        bedrooms={bedrooms} setBedrooms={setBedrooms}
-        amenities={amenities} setAmenities={setAmenities}
-        onSubmit={handleCreate}
-        submitLabel="Create"
-      />
+    <ListingForm
+      formtitle="Create"
+      title={title} setTitle={setTitle}
+      street={street} setStreet={setStreet}
+      city={city} setCity={setCity}
+      stateVal={state} setStateVal={setState}
+      postcode={postcode} setPostcode={setPostcode}
+      price={price} setPrice={setPrice}
+      type={type} setType={setType}
+      bathrooms={bathrooms} setBathrooms={setBathrooms}
+      bedrooms={bedrooms} setBedrooms={setBedrooms}
+      amenities={amenities} setAmenities={setAmenities}
+      onSubmit={handleCreate}
+      submitLabel="Create"
+    />
   );
 };
 

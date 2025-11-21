@@ -224,178 +224,178 @@ const HostListings = ({ showMsg }) => {
   }
 
   return (
-      <Box sx={{ maxWidth: 900, mx: "auto", mt: 4 }}>
-        <Typography variant="h4" sx={{ mb: 3 }}>
+    <Box sx={{ maxWidth: 900, mx: "auto", mt: 4 }}>
+      <Typography variant="h4" sx={{ mb: 3 }}>
           Your Listings
-        </Typography>
+      </Typography>
 
-        {/* Create Button */}
-        <Button
-          variant="contained"
-          sx={{ mb: 3 }}
-          onClick={() => navigate("/host/new")}
-        >
+      {/* Create Button */}
+      <Button
+        variant="contained"
+        sx={{ mb: 3 }}
+        onClick={() => navigate("/host/new")}
+      >
           Create New Listing
-        </Button>
+      </Button>
 
-        <Stack spacing={3}>
-          {/* create card for every record */}
-          {listings.map((listing) => {
-            const reviewCount = listing.reviews?.length || 0;
-            // caculate avg rating
-            const avgRating =
+      <Stack spacing={3}>
+        {/* create card for every record */}
+        {listings.map((listing) => {
+          const reviewCount = listing.reviews?.length || 0;
+          // caculate avg rating
+          const avgRating =
               reviewCount > 0? listing.reviews.reduce(
                 (sum, r) => sum + (r.rating || 0),
                 0
               ) / reviewCount
                 : 0;
 
-            const beds = listing.metadata?.bedrooms || 0;
-            const baths = listing.metadata?.bathrooms || 0;
-            const type = listing.metadata?.type || "Unknown";
+          const beds = listing.metadata?.bedrooms || 0;
+          const baths = listing.metadata?.bathrooms || 0;
+          const type = listing.metadata?.type || "Unknown";
 
-            return (
-              <Card
-                key={listing.id}
+          return (
+            <Card
+              key={listing.id}
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+                boxShadow: 3,
+              }}
+            >
+              <CardMedia
+                component="img"
                 sx={{
-                  display: "flex",
-                  flexDirection: { xs: "column", sm: "row" },
-                  boxShadow: 3,
+                  width: { xs: "100%", sm: 200 },
+                  height: 150,
+                  objectFit: "cover",
                 }}
-              >
-                <CardMedia
-                  component="img"
-                  sx={{
-                    width: { xs: "100%", sm: 200 },
-                    height: 150,
-                    objectFit: "cover",
-                  }}
-                  image={listing.thumbnail}
-                  alt={listing.title}
-                />
+                image={listing.thumbnail}
+                alt={listing.title}
+              />
 
-                <CardContent sx={{ flex: 1 }}>
-                  <Typography variant="h4">{listing.title}</Typography>
-                  <Typography variant="h6">{type}</Typography>
+              <CardContent sx={{ flex: 1 }}>
+                <Typography variant="h4">{listing.title}</Typography>
+                <Typography variant="h6">{type}</Typography>
 
-                  <Typography sx={{ mt: 1 }}>
+                <Typography sx={{ mt: 1 }}>
                     Beds: {beds} · Bathrooms: {baths}
-                  </Typography>
+                </Typography>
 
-                  <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-                    <Rating value={avgRating} precision={0.5} readOnly />
-                    <Typography sx={{ ml: 1 }}>
+                <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
+                  <Rating value={avgRating} precision={0.5} readOnly />
+                  <Typography sx={{ ml: 1 }}>
                       ({reviewCount} reviews)
-                    </Typography>
-                  </Box>
-
-                  <Typography sx={{ mt: 1, fontWeight: "bold" }}>
-                    ${listing.price} / night
                   </Typography>
+                </Box>
 
-                  <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
-                    <Button
-                      variant="contained"
-                      onClick={() => navigate(`/host/${listing.id}`)}
-                    >
+                <Typography sx={{ mt: 1, fontWeight: "bold" }}>
+                    ${listing.price} / night
+                </Typography>
+
+                <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
+                  <Button
+                    variant="contained"
+                    onClick={() => navigate(`/host/${listing.id}`)}
+                  >
                       Edit
-                    </Button>
+                  </Button>
 
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => openDeleteDialog(listing.id)}
+                  >
+                      Delete
+                  </Button>
+
+                  {listing.published ? (
                     <Button
                       variant="contained"
-                      color="error"
-                      onClick={() => openDeleteDialog(listing.id)}
+                      color="warning"
+                      onClick={() => handleUnpublish(listing.id)}
                     >
-                      Delete
-                    </Button>
-
-                    {listing.published ? (
-                      <Button
-                        variant="contained"
-                        color="warning"
-                        onClick={() => handleUnpublish(listing.id)}
-                      >
                         Unpublish
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="contained"
-                        color="success"
-                        onClick={() => openPublishDialog(listing.id)}
-                      >
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      color="success"
+                      onClick={() => openPublishDialog(listing.id)}
+                    >
                         Publish
-                      </Button>
-                    )}
+                    </Button>
+                  )}
 
-                  </Stack>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </Stack>
+                </Stack>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </Stack>
         
-        {/* delete confirm */}
-        <Dialog
-          open={deleteOpen}
-          onClose={closeDeleteDialog}
-          aria-labelledby="delete-dialog-title"
-          aria-describedby="delete-dialog-description"
-        >
-          <DialogTitle id="delete-dialog-title">
-            {"Delete this listing?"}
-          </DialogTitle>
+      {/* delete confirm */}
+      <Dialog
+        open={deleteOpen}
+        onClose={closeDeleteDialog}
+        aria-labelledby="delete-dialog-title"
+        aria-describedby="delete-dialog-description"
+      >
+        <DialogTitle id="delete-dialog-title">
+          {"Delete this listing?"}
+        </DialogTitle>
 
-          <DialogContent>
-            <DialogContentText id="delete-dialog-description">
+        <DialogContent>
+          <DialogContentText id="delete-dialog-description">
               This action cannot be undone. Are you sure you want to delete this listing?
-            </DialogContentText>
-          </DialogContent>
+          </DialogContentText>
+        </DialogContent>
 
-          <DialogActions>
-            <Button onClick={closeDeleteDialog}>Cancel</Button>
-            <Button color="error" onClick={handleDelete} autoFocus>
+        <DialogActions>
+          <Button onClick={closeDeleteDialog}>Cancel</Button>
+          <Button color="error" onClick={handleDelete} autoFocus>
               Delete
-            </Button>
-          </DialogActions>
-        </Dialog>
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-        {/* publish dialog  */}
-        <Dialog open={pubOpen} onClose={closePublishDialog}>
-          <DialogTitle>Publish Listing</DialogTitle>
+      {/* publish dialog  */}
+      <Dialog open={pubOpen} onClose={closePublishDialog}>
+        <DialogTitle>Publish Listing</DialogTitle>
 
-          <DialogContent>
-            <DialogContentText>
+        <DialogContent>
+          <DialogContentText>
               Select a date range for availability.
-            </DialogContentText>
+          </DialogContentText>
 
-            <TextField
-              margin="dense"
-              label="Start Date"
-              type="date"
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-            />
-            <TextField
-              margin="dense"
-              label="End Date"
-              type="date"
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-            />
-          </DialogContent>
+          <TextField
+            margin="dense"
+            label="Start Date"
+            type="date"
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="End Date"
+            type="date"
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
+        </DialogContent>
 
-          <DialogActions>
-            <Button onClick={closePublishDialog}>Cancel</Button>
-            <Button variant="contained" color="success" onClick={handlePublish}>
+        <DialogActions>
+          <Button onClick={closePublishDialog}>Cancel</Button>
+          <Button variant="contained" color="success" onClick={handlePublish}>
               Publish
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </Box>
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
 };
 
