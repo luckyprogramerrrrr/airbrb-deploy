@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -11,40 +12,132 @@ import {
   Stack,
 } from "@mui/material";
 import config from "../../backend.config.json";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Msgsnackbar from "../components/Msgsnackbar";
 
 const HostListings = () => {
   const navigate = useNavigate();
   const email = localStorage.getItem("email");
 
+  //list
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const token = localStorage.getItem("token");
+  // login guard
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
+
+  //delete dialog(dialog not in listing.map())
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+
+  const openDeleteDialog = (id) => {
+    setDeleteId(id);
+    setDeleteOpen(true);
+  };
+
+  const closeDeleteDialog = () => {
+    setDeleteOpen(false);
+    setDeleteId(null);
+  };
+
+  //msgsnackbar
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("info");
+
+  const showMsg = (msg, severity = "info") => {
+    setSnackbarMsg(msg);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
+
+  const onClose = () => setSnackbarOpen(false);
+
+
   const fetchListings = async () => {
-    const res = await fetch(`http://localhost:${config.BACKEND_PORT}/listings`);
-    const data = await res.json();
-    if (!res.ok) return;
+    try {
+      const res = await fetch(`http://localhost:${config.BACKEND_PORT}/listings`);
+      const data = await res.json().catch(() => ({}));
 
-    // filter the array
-    const mylist = data.listings.filter((l) => l.owner === email);
+      if (!res.ok) {
+        showMsg(data.error || "Failed to load listings", "error");
+        return;
+      }
 
-    //Fetch details for each ID(return array)
-    const detaillist = await Promise.all(
-      mylist.map(async (summary) => {
-        const res2 = await fetch(
-          `http://localhost:${config.BACKEND_PORT}/listings/${summary.id}`
-        );
-        const detail = await res2.json();
-        return { id: summary.id, ...detail.listing };
-      })
-    );
+      if (!Array.isArray(data.listings)) {
+        showMsg("Invalid listings data from server", "error");
+        return;
+      }
 
-    setListings(detaillist);
-    setLoading(false);
+      //fliter the array
+      const mylist = data.listings.filter((l) => l.owner === email);
+
+      //fetch the detail for each id(return array)
+      const detaillist = await Promise.all(
+        mylist.map(async (summary) => {
+          const res2 = await fetch(
+            `http://localhost:${config.BACKEND_PORT}/listings/${summary.id}`
+          );
+
+          const data2 = await res2.json().catch(() => ({}));
+
+          if (!res2.ok) {
+            showMsg(data2.error || "Failed to load listing detail", "error");
+            return null;
+          }
+
+          return { id: summary.id, ...data2.listing };
+        })
+      );
+
+      setListings(detaillist.filter(Boolean));
+    } catch (err) {
+      showMsg("Network error", "error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchListings();
   }, []);
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
+
+    try {
+      const res = await fetch(
+        `http://localhost:${config.BACKEND_PORT}/listings/${deleteId}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        showMsg(data.error || "Failed to delete listing", "error");
+        closeDeleteDialog();
+        return;
+      }
+
+      showMsg("Listing deleted!", "success");
+      closeDeleteDialog();
+      fetchListings();
+
+    } catch {
+      showMsg("Network error", "error");
+      closeDeleteDialog();
+    }
+  };
 
   if (loading) {
     return (
@@ -130,16 +223,26 @@ const HostListings = () => {
                     Edit
                   </Button>
 
-                  <Button variant="contained" color="error">
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => openDeleteDialog(listing.id)}
+                  >
                     Delete
                   </Button>
 
                   {listing.published ? (
-                    <Button variant="contained" color="warning">
+                    <Button 
+                      variant="contained" color="warning"
+                      onClick={() => navigate(`/host/${listing.id}`)}
+                    >
                       Unpublish
                     </Button>
                   ) : (
-                    <Button variant="contained" color="success">
+                    <Button 
+                      variant="contained" color="success"
+                      onClick={() => navigate(`/host/${listing.id}`)}
+                    >
                       Publish
                     </Button>
                   )}
@@ -149,6 +252,38 @@ const HostListings = () => {
           );
         })}
       </Stack>
+      
+      {/* delete confirm */}
+      <Dialog
+        open={deleteOpen}
+        onClose={closeDeleteDialog}
+        aria-labelledby="delete-dialog-title"
+        aria-describedby="delete-dialog-description"
+      >
+        <DialogTitle id="delete-dialog-title">
+          {"Delete this listing?"}
+        </DialogTitle>
+
+        <DialogContent>
+          <DialogContentText id="delete-dialog-description">
+            This action cannot be undone. Are you sure you want to delete this listing?
+          </DialogContentText>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={closeDeleteDialog}>Cancel</Button>
+          <Button color="error" onClick={handleDelete} autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Msgsnackbar
+        open={snackbarOpen}
+        message={snackbarMsg}
+        severity={snackbarSeverity}
+        onClose={snackbarOnClose}
+      />
     </Box>
   );
 };
