@@ -7,11 +7,6 @@ const AuthForm = ({
   title,
   fields = [],
   onSubmit,
-
-  snackbarOpen,
-  snackbarMsg,
-  snackbarSeverity,
-  snackbarOnClose,
 }) => {
 
   return (
@@ -49,14 +44,6 @@ const AuthForm = ({
           Cancel
         </Button>
       </Box>
-
-      {/* Snackbar */}
-      <Msgsnackbar
-        open={snackbarOpen}
-        message={snackbarMsg}
-        severity={snackbarSeverity}
-        onClose={snackbarOnClose}
-      />
     </Box>
   );
 };

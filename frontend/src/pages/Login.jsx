@@ -3,23 +3,11 @@ import AuthForm from '../components/AuthForm';
 import config from '../../backend.config.json';
 import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
+const Login = ({ showMsg }) => {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMsg, setSnackbarMsg] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('info');
-
-  const showMsg = (msg, severity = 'info') => {
-    setSnackbarMsg(msg);
-    setSnackbarSeverity(severity);
-    setSnackbarOpen(true);
-  };
-
-  const onClose = () => setSnackbarOpen(false);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -59,12 +47,6 @@ const Login = () => {
         { label: "Password", type: "password", value: password, onChange: setPassword }
       ]}
       onSubmit={handleLogin}
-
-
-      snackbarOpen={snackbarOpen}
-      snackbarMsg={snackbarMsg}
-      snackbarSeverity={snackbarSeverity}
-      snackbarOnClose={onClose}
     />
   );
 };

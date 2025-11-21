@@ -1,4 +1,9 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useState } from 'react';
+
+// Components
+import Navbar from './components/Navbar';
+import Msgsnackbar from './components/Msgsnackbar';
 
 // Public pages
 import Landing from './pages/Landing';
@@ -11,30 +16,51 @@ import Register from './pages/Register';
 // Host pages
 import HostListings from './pages/HostListings';
 import CreateListing from './pages/CreateListing';
-import Navbar from './components/Navbar';
 import EditListing from './pages/EditListing';
 
 const App = () => {
-    return (
-      <BrowserRouter>
-        <Navbar />
-        <Routes>
-          {/* Landing + Listings */}
-          <Route path="/" element={<Landing />} />
-          <Route path="/listings" element={<Listings />} />
+  // Global snackbar state
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('info');
 
-          {/* Auth */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-
-          <Route path="/host" element={<HostListings />} />
-          <Route path="/host/new" element={<CreateListing />} />
-          <Route path="/host/:id" element={<EditListing />} />
-
-
-        </Routes>
-      </BrowserRouter>
-    );
+  const showMsg = (msg, severity = 'info') => {
+    setSnackbarMsg(msg);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
   };
+
+  const onClose = () => setSnackbarOpen(false);
+
+  return (
+    <BrowserRouter>
+      {/* Navbar receives showMsg so it can display errors */}
+      <Navbar showMsg={showMsg} />
+
+      <Routes>
+        {/* Public */}
+        <Route path="/" element={<Landing />} />
+        <Route path="/listings" element={<Listings />} />
+
+        {/* Auth */}
+        <Route path="/login" element={<Login showMsg={showMsg} />} />
+        <Route path="/register" element={<Register showMsg={showMsg} />} />
+
+        {/* Host actions */}
+        <Route path="/host" element={<HostListings showMsg={showMsg} />} />
+        <Route path="/host/new" element={<CreateListing showMsg={showMsg} />} />
+        <Route path="/host/:id" element={<EditListing showMsg={showMsg} />} />
+      </Routes>
+
+      {/* Global Snackbar */}
+      <Msgsnackbar
+        open={snackbarOpen}
+        message={snackbarMsg}
+        severity={snackbarSeverity}
+        onClose={onClose}
+      />
+    </BrowserRouter>
+  );
+};
 
 export default App;

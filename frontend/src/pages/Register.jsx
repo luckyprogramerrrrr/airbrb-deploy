@@ -3,25 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import AuthForm from '../components/AuthForm';
 import config from '../../backend.config.json';
 
-const Register = () => {
+const Register = ({ showMsg }) => {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
-
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMsg, setSnackbarMsg] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('info');
-
-  const showMsg = (msg, severity = 'info') => {
-    setSnackbarMsg(msg);
-    setSnackbarSeverity(severity);
-    setSnackbarOpen(true);
-  };
-
-  const onClose = () => setSnackbarOpen(false);
 
   const handleRegister = async () => {
     if (!email || !name || !password || !confirm) {
@@ -69,11 +57,6 @@ const Register = () => {
         { label: "Password", type: "password", value: password, onChange: setPassword },
         { label: "Confirm Password", type: "password", value: confirm, onChange: setConfirm },
       ]}
-
-      snackbarOpen={snackbarOpen}
-      snackbarMsg={snackbarMsg}
-      snackbarSeverity={snackbarSeverity}
-      snackbarOnClose={onClose}
     />
   );
 };

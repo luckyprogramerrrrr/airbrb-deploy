@@ -1,18 +1,13 @@
 import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { useNavigate, useParams } from "react-router-dom";
-import Msgsnackbar from "../components/Msgsnackbar";
 import ListingForm from "../components/ListingForm";
 import config from "../../backend.config.json";
 
-const EditListing = () => {
+const EditListing = ({ showMsg }) => {
   const navigate = useNavigate();
   const { id } = useParams();
   const token = localStorage.getItem("token");
-  // login guard
-  if (!token) {
-    return <Navigate to="/" replace />;
-  }
 
   // listing form
   const [title, setTitle] = useState("");
@@ -25,18 +20,6 @@ const EditListing = () => {
   const [bathrooms, setBathrooms] = useState("");
   const [bedrooms, setBedrooms] = useState("");
   const [amenities, setAmenities] = useState("");
-
-  // snackbar
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMsg, setSnackbarMsg] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState("info");
-
-  const showMsg = (msg, severity = "info") => {
-    setSnackbarMsg(msg);
-    setSnackbarSeverity(severity);
-    setSnackbarOpen(true);
-  };
-  const onClose = () => setSnackbarOpen(false);
 
   // fetch exist data
   const loadDetail = async () => {
@@ -52,7 +35,6 @@ const EditListing = () => {
       }
 
       const lst = data.listing;
-      console.log("lst =", lst);
 
       // set initial values
       setTitle(lst.title);
@@ -122,8 +104,12 @@ const EditListing = () => {
     }
   };
 
+  // login guard
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
+
   return (
-    <>
       <ListingForm
         formtitle="edit"
         title={title} setTitle={setTitle}
@@ -140,14 +126,6 @@ const EditListing = () => {
         onSubmit={handleSave}
         submitLabel="save"
       />
-
-      <Msgsnackbar
-        open={snackbarOpen}
-        message={snackbarMsg}
-        severity={snackbarSeverity}
-        onClose={onClose}
-      />
-    </>
   );
 };
 

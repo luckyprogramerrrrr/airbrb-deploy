@@ -18,9 +18,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import Msgsnackbar from "../components/Msgsnackbar";
 
-const HostListings = () => {
+const HostListings = ({ showMsg }) => {
   const navigate = useNavigate();
   const email = localStorage.getItem("email");
 
@@ -29,10 +28,6 @@ const HostListings = () => {
   const [loading, setLoading] = useState(true);
 
   const token = localStorage.getItem("token");
-  // login guard
-  if (!token) {
-    return <Navigate to="/" replace />;
-  }
 
   //publish/unpublish
   const [pubOpen, setPubOpen] = useState(false);
@@ -68,20 +63,6 @@ const HostListings = () => {
     setDeleteOpen(false);
     setDeleteId(null);
   };
-
-  //msgsnackbar
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMsg, setSnackbarMsg] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState("info");
-
-  const showMsg = (msg, severity = "info") => {
-    setSnackbarMsg(msg);
-    setSnackbarSeverity(severity);
-    setSnackbarOpen(true);
-  };
-
-  const onClose = () => setSnackbarOpen(false);
-
 
   const fetchListings = async () => {
     try {
@@ -120,7 +101,7 @@ const HostListings = () => {
       );
 
       setListings(detaillist.filter(Boolean));
-    } catch (err) {
+    } catch (_err) {
       showMsg("Network error", "error");
     } finally {
       setLoading(false);
@@ -231,6 +212,10 @@ const HostListings = () => {
     }
   };
 
+  // login guard
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
 
   if (loading) {
     return (
@@ -239,7 +224,6 @@ const HostListings = () => {
   }
 
   return (
-    <>
       <Box sx={{ maxWidth: 900, mx: "auto", mt: 4 }}>
         <Typography variant="h4" sx={{ mb: 3 }}>
           Your Listings
@@ -261,9 +245,9 @@ const HostListings = () => {
             // caculate avg rating
             const avgRating =
               reviewCount > 0? listing.reviews.reduce(
-                    (sum, r) => sum + (r.rating || 0),
-                    0
-                  ) / reviewCount
+                (sum, r) => sum + (r.rating || 0),
+                0
+              ) / reviewCount
                 : 0;
 
             const beds = listing.metadata?.bedrooms || 0;
@@ -412,14 +396,6 @@ const HostListings = () => {
           </DialogActions>
         </Dialog>
       </Box>
-
-      <Msgsnackbar
-        open={snackbarOpen}
-        message={snackbarMsg}
-        severity={snackbarSeverity}
-        onClose={onClose}
-      />
-    </>
   );
 };
 

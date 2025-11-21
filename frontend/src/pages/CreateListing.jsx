@@ -1,17 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Msgsnackbar from "../components/Msgsnackbar";
 import ListingForm from "../components/ListingForm";
 import config from "../../backend.config.json";
 import { Navigate } from "react-router-dom";
 
-const CreateListing = () => {
+const CreateListing = ({ showMsg }) => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-  // login guard
-  if (!token) {
-    return <Navigate to="/" replace />;
-  }
 
   // Basic fields
   const [title, setTitle] = useState("");
@@ -28,16 +23,6 @@ const CreateListing = () => {
   const [bedrooms, setBedrooms] = useState("");
   const [amenities, setAmenities] = useState("");
 
-  // Snackbar
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMsg, setSnackbarMsg] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState("info");
-
-  const showMsg = (msg, severity = "info") => {
-    setSnackbarMsg(msg);
-    setSnackbarSeverity(severity);
-    setSnackbarOpen(true);
-  };
   const onClose = () => setSnackbarOpen(false);
 
   const defaultThumbnail =
@@ -93,8 +78,12 @@ const CreateListing = () => {
     }
   };
 
+  // login guard
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
+
   return (
-    <>
       <ListingForm
         formtitle="Create"
         title={title} setTitle={setTitle}
@@ -110,14 +99,6 @@ const CreateListing = () => {
         onSubmit={handleCreate}
         submitLabel="Create"
       />
-
-      <Msgsnackbar
-        open={snackbarOpen}
-        message={snackbarMsg}
-        severity={snackbarSeverity}
-        onClose={onClose}
-      />
-    </>
   );
 };
 

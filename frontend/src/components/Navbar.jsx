@@ -2,32 +2,37 @@ import { AppBar, Toolbar, Typography, Button } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import config from '../../backend.config.json';
 
-const Navbar = () => {
+const Navbar = ({ showMsg }) => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const loggedIn = Boolean(token);
 
   const handleLogout = async () => {
     try {
-      await fetch(`http://localhost:${config.BACKEND_PORT}/user/auth/logout`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        `http://localhost:${config.BACKEND_PORT}/user/auth/logout`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        const data = await res.json();
-        onsole.warn("Logout error:", data.error);
+        showMsg(`Logout failed: ${data.error || "Unknown error"}`, "error");
+        return;
       }
-    } catch {
-      // Logout on client side regardless of network failure
-    }
 
-    localStorage.removeItem("token");
-    localStorage.removeItem("email");
-    navigate("/");
+      // Clear session
+      localStorage.removeItem("token");
+      localStorage.removeItem("email");
+
+      showMsg("Logged out successfully", "success");
+      navigate("/");
+    } catch (_err) {
+      showMsg("Network error while logging out", "error");
+    }
   };
 
   return (
