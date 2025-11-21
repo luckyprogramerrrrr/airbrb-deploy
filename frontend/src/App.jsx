@@ -7,7 +7,6 @@ import Msgsnackbar from './components/Msgsnackbar';
 
 // Public pages
 import Landing from './pages/Landing';
-import Listings from './pages/Listings';
 
 // Auth pages
 import Login from './pages/Login';
@@ -40,7 +39,7 @@ const App = () => {
       <Routes>
         {/* Public */}
         <Route path="/" element={<Landing showMsg={showMsg}/>} />
-        <Route path="/listings" element={<Listings />} />
+        <Route path="/listings" element={<Landing showMsg={showMsg}/>} />
 
         {/* Auth */}
         <Route path="/login" element={<Login showMsg={showMsg} />} />

@@ -94,41 +94,41 @@ const Landing = ({ showMsg }) => {
 
     // select one fliter
     switch (filterType) {
-      case "price":
-        if (minPrice) res = res.filter((l) => l.price >= Number(minPrice));
-        if (maxPrice) res = res.filter((l) => l.price <= Number(maxPrice));
-        if (sortOrder === "asc")
-          res = [...res].sort((a, b) => a.price - b.price);
-        if (sortOrder === "desc")
-          res = [...res].sort((a, b) => b.price - a.price);
-        break;
+    case "price":
+      if (minPrice) res = res.filter((l) => l.price >= Number(minPrice));
+      if (maxPrice) res = res.filter((l) => l.price <= Number(maxPrice));
+      if (sortOrder === "asc")
+        res = [...res].sort((a, b) => a.price - b.price);
+      if (sortOrder === "desc")
+        res = [...res].sort((a, b) => b.price - a.price);
+      break;
 
-      case "bedrooms":
-        if (minBedrooms) res = res.filter((l) => l.metadata.bedrooms >= minBedrooms);
-        if (maxBedrooms) res = res.filter((l) => l.metadata.bedrooms <= maxBedrooms);
-        if (sortOrder === "asc")
-          res = [...res].sort((a, b) => a.metadata.bedrooms - b.metadata.bedrooms);
-        if (sortOrder === "desc")
-          res = [...res].sort((a, b) => b.metadata.bedrooms - a.metadata.bedrooms);
-        break;
+    case "bedrooms":
+      if (minBedrooms) res = res.filter((l) => l.metadata.bedrooms >= minBedrooms);
+      if (maxBedrooms) res = res.filter((l) => l.metadata.bedrooms <= maxBedrooms);
+      if (sortOrder === "asc")
+        res = [...res].sort((a, b) => a.metadata.bedrooms - b.metadata.bedrooms);
+      if (sortOrder === "desc")
+        res = [...res].sort((a, b) => b.metadata.bedrooms - a.metadata.bedrooms);
+      break;
 
-      case "rating":
-        if (sortOrder === "asc")
-          res = [...res].sort((a, b) => avgRating(a) - avgRating(b));
-        if (sortOrder === "desc")
-          res = [...res].sort((a, b) => avgRating(b) - avgRating(a));
-        break;
+    case "rating":
+      if (sortOrder === "asc")
+        res = [...res].sort((a, b) => avgRating(a) - avgRating(b));
+      if (sortOrder === "desc")
+        res = [...res].sort((a, b) => avgRating(b) - avgRating(a));
+      break;
 
-      case "date":
-        if (startDate && endDate) {
-          res = res.filter((l) =>
-            availableForRange(l.availability, startDate, endDate)
-          );
-        }
-        break;
+    case "date":
+      if (startDate && endDate) {
+        res = res.filter((l) =>
+          availableForRange(l.availability, startDate, endDate)
+        );
+      }
+      break;
 
-      default:
-        break;
+    default:
+      break;
     }
 
     setFiltered(res);
@@ -137,7 +137,7 @@ const Landing = ({ showMsg }) => {
   const avgRating = (listing) => {
     const reviewCount = listing.reviews?.length || 0;
     const avgRating = reviewCount > 0? listing.reviews.reduce((sum, r) => sum + (r.rating || 0),0) / reviewCount
-    : 0;
+      : 0;
     return avgRating;
   };
 
