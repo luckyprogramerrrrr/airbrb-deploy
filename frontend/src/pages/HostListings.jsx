@@ -10,6 +10,7 @@ import {
   Button,
   Rating,
   Stack,
+  TextField,
 } from "@mui/material";
 import config from "../../backend.config.json";
 import Dialog from '@mui/material/Dialog';
@@ -32,6 +33,27 @@ const HostListings = () => {
   if (!token) {
     return <Navigate to="/" replace />;
   }
+
+  //publish/unpublish
+  const [pubOpen, setPubOpen] = useState(false);
+  const [pubId, setPubId] = useState(null);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  const openPublishDialog = (id) => {
+    setPubId(id);
+    setStartDate("");
+    setEndDate("");
+    setPubOpen(true);
+  };
+
+  const closePublishDialog = () => {
+    setPubOpen(false);
+    setPubId(null);
+    setStartDate("");
+    setEndDate("");
+  };
+
 
   //delete dialog(dialog not in listing.map())
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -139,6 +161,77 @@ const HostListings = () => {
     }
   };
 
+  //publish
+  const handlePublish = async () => {
+    if (!startDate || !endDate) {
+      showMsg("Please select both start and end dates", "error");
+      return;
+    }
+
+    const body = {
+      availability: [
+        { start: startDate, end: endDate }
+      ]
+    };
+
+    try {
+      const res = await fetch(
+        `http://localhost:${config.BACKEND_PORT}/listings/publish/${pubId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        showMsg(data.error || "Failed to publish listing", "error");
+        return;
+      }
+
+      showMsg("Listing published!", "success");
+      closePublishDialog();
+      fetchListings();
+
+    } catch {
+      showMsg("Network error", "error");
+    }
+  };
+
+  //unpublish
+  const handleUnpublish = async (id) => {
+    try {
+      const res = await fetch(
+        `http://localhost:${config.BACKEND_PORT}/listings/unpublish/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+        }
+      );
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        showMsg(data.error || "Failed to unpublish listing", "error");
+        return;
+      }
+
+      showMsg("Listing unpublished!", "success");
+      fetchListings();
+
+    } catch {
+      showMsg("Network error", "error");
+    }
+  };
+
+
   if (loading) {
     return (
       <Typography sx={{ mt: 4, textAlign: "center" }}>Loading...</Typography>
@@ -233,20 +326,23 @@ const HostListings = () => {
                     </Button>
 
                     {listing.published ? (
-                      <Button 
-                        variant="contained" color="warning"
-                        onClick={() => navigate(`/host/${listing.id}`)}
+                      <Button
+                        variant="contained"
+                        color="warning"
+                        onClick={() => handleUnpublish(listing.id)}
                       >
                         Unpublish
                       </Button>
                     ) : (
-                      <Button 
-                        variant="contained" color="success"
-                        onClick={() => navigate(`/host/${listing.id}`)}
+                      <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => openPublishDialog(listing.id)}
                       >
                         Publish
                       </Button>
                     )}
+
                   </Stack>
                 </CardContent>
               </Card>
@@ -275,6 +371,43 @@ const HostListings = () => {
             <Button onClick={closeDeleteDialog}>Cancel</Button>
             <Button color="error" onClick={handleDelete} autoFocus>
               Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* publish dialog  */}
+        <Dialog open={pubOpen} onClose={closePublishDialog}>
+          <DialogTitle>Publish Listing</DialogTitle>
+
+          <DialogContent>
+            <DialogContentText>
+              Select a date range for availability.
+            </DialogContentText>
+
+            <TextField
+              margin="dense"
+              label="Start Date"
+              type="date"
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+            <TextField
+              margin="dense"
+              label="End Date"
+              type="date"
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </DialogContent>
+
+          <DialogActions>
+            <Button onClick={closePublishDialog}>Cancel</Button>
+            <Button variant="contained" color="success" onClick={handlePublish}>
+              Publish
             </Button>
           </DialogActions>
         </Dialog>
